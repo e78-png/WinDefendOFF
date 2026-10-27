@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+jobs:
+  build:
+    name: 建置與測試 (windows-latest)
+    runs-on: windows-latest
+
+    steps:
+      - name: 檢出程式碼
+        uses: actions/checkout@v4
+
+      - name: 安裝 .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: 還原相依套件
+        run: dotnet restore WinDefendOFF.sln
+
+      - name: 建置
+        run: dotnet build WinDefendOFF.sln -c Release --no-restore -warnaserror
+
+      - name: 執行測試
+        run: dotnet test tests/WinDefendOFF.Tests -c Release --no-build --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results
+
+      - name: 上傳測試結果
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: ./test-results
+
+  publish:
+    name: 發布 self-contained 單檔
+    runs-on: windows-latest
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: 檢出程式碼
+        uses: actions/checkout@v4
+
+      - name: 安裝 .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: 產生發布包
+        run: |
+          $version = $env:GITHUB_REF_NAME.TrimStart('v')
+          ./build/publish.ps1 -SelfContained -Zip -Version $version
+
+      - name: 上傳發布產物
+        uses: actions/upload-artifact@v4
+        with:
+          name: WinDefendOFF-${{ github.ref_name }}
+          path: |
+            publish-sc/
+            WinDefendOFF-*.zip
+
+      - name: 建立 GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: WinDefendOFF-*.zip
+          generate_release_notes: true
+          body: |
+            ## WinDefendOFF ${{ github.ref_name }}
+
+            Windows 上的 Microsoft Defender 開關工具。
+
+            - GUI：`WinDefendOFF.exe`
+            - CLI：`cli\WinDefendOFF.Cli.exe`
+            - 切換不需重新啟動電腦
+
+            詳見 [README](https://github.com/${{ github.repository }}#readme)。
