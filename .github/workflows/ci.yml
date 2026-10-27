@@ -33,10 +33,16 @@ jobs:
         run: dotnet restore WinDefendOFF.sln
 
       - name: 建置
-        run: dotnet build WinDefendOFF.sln -c Release --no-restore -warnaserror
+        run: dotnet build WinDefendOFF.sln -c Release --no-restore -warnaserror -p:Platform=x64
 
       - name: 執行測試
-        run: dotnet test tests/WinDefendOFF.Tests -c Release --no-build --logger "trx;LogFileName=test-results.trx" --results-directory ./test-results
+        # 專案設定 Platforms=x64，build 產出到 bin/x64/Release；
+        # 測試必須指到同一路徑，否則 --no-build 會找不到測試 dll。
+        run: >
+          dotnet test tests/WinDefendOFF.Tests
+          -c Release --no-build -p:Platform=x64
+          --logger "trx;LogFileName=test-results.trx"
+          --results-directory ./test-results
 
       - name: 上傳測試結果
         if: always()
