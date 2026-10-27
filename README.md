@@ -260,6 +260,8 @@ BootTime after  = 10/27/2026 18:10:38   ← 未重開機
 
 ## 參考資源
 
-- [wesmar/WinDefCtl](https://github.com/wesmar/WinDefCtl) — 驅動式終結與 IFEO 手法來源
 - [SkyN9ne/DefenderControl](https://github.com/SkyN9ne/DefenderControl) — `reg save/load/restore` 手法研究
 - [Breaking through Defender's Gates](https://www.alteredsecurity.com/post/disabling-tamper-protection-and-other-defender-mde-components) — protected service 與篡改保護分析
+- [Microsoft Defender 官方文件](https://learn.microsoft.com/microsoft.com/defender-endpoint/)
+
+第三方聲明詳見 [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md)。
