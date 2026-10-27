@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Platforms>x64</Platforms>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <AssemblyName>WinDefendOFF.Core</AssemblyName>
+    <RootNamespace>WinDefendOFF.Core</RootNamespace>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Product>WinDefendOFF</Product>
+    <Company>WinDefendOFF</Company>
+    <NeutralLanguage>zh-TW</NeutralLanguage>
+  </PropertyGroup>
+
+</Project>
