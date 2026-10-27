@@ -1,0 +1,15 @@
+# 建置輸出
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# 發布產物
+publish/
+publish-sc/
+artifacts/
+*.zip
+
+# 測試輸出
+test-results/
