@@ -3,6 +3,8 @@ name: CI
 on:
   push:
     branches: [main, master]
+    # 標籤推送也要觸發，讓 publish job 能產出發行包
+    tags: ['v*']
   pull_request:
     branches: [main, master]
   workflow_dispatch:
@@ -56,6 +58,9 @@ jobs:
     runs-on: windows-latest
     needs: build
     if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      # 建立 Release 需要寫入 contents
+      contents: write
 
     steps:
       - name: 檢出程式碼
@@ -67,9 +72,13 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: 產生發布包
+        shell: pwsh
         run: |
+          $ErrorActionPreference = 'Stop'
           $version = $env:GITHUB_REF_NAME.TrimStart('v')
           ./build/publish.ps1 -SelfContained -Zip -Version $version
+          Write-Host "產物："
+          Get-ChildItem -Path . -Filter 'WinDefendOFF-*.zip' | Select-Object Name, Length
 
       - name: 上傳發布產物
         uses: actions/upload-artifact@v4
